@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+
+ <div class="row" style="margin-top: 40px;">
+{% for i in showlist %}
+<div class="col-md-3" style="margin-top: 30px;">
+  <div class="card" style="width:19rem;">
+    <a href="{% url 'show' i.id i.categories %}">
+      <img src="{{i.image.url}}" class="card-img-top" alt="..." height="200px">
+    </a>
+    <div class="card-body">
+      <h3 class="card-title">{{i.name}}</h3>
+      <h6>{{i.description}}</h6>
+
+      <h3 style="margin-left: 30px;">
+        <button class="btn" onclick="decrement({{i.id}})"><i class="bi bi-dash"></i></button>
+        <span id="c{{i.id}}">{{i.weight_kg}}</span>kg
+        <button class="btn" onclick="increment({{i.id}})"><i class="bi bi-plus"></i></button>
+      </h3>
+
+      <span id="p{{i.id}}" style="font-size: 30px;">{{i.price}}</span>₹
+      <span id="t{{i.id}}" hidden>{{i.price}}</span>
+
+      <div style="display: flex;">
+        {% for j in store %}
+        {% if i.rating >= j %}
+          <i class="bi bi-star-fill " style="color: green;"></i>
+        {% else %}
+          <i class="bi bi-star-fill " style="color:rgba(47, 45, 45, 0.262)"></i>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      <button class="btn btn-success">Buy now</button>
+      <a href="{% url 'remove_cart' i.id %}">
+        <button class="btn btn-danger" onclick="alert('cart successfully deleted')">Delete</button>
+      </a>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+ </div>
+
+
+
+ <script>
+function increment(id) {
+  var qty = document.getElementById('c' + id);
+  var price = document.getElementById('p' + id);
+  var basePrice = document.getElementById('t' + id);
+
+  var quantity = parseFloat(qty.innerHTML);
+  quantity++;
+  qty.innerHTML = quantity;
+
+  var total = parseFloat(basePrice.innerHTML) * quantity;
+  price.innerHTML = total;
+}
+
+function decrement(id) {
+  var qty = document.getElementById('c' + id);
+  var price = document.getElementById('p' + id);
+  var basePrice = document.getElementById('t' + id);
+
+  var quantity = parseFloat(qty.innerHTML);
+  if (quantity > 1) {
+    quantity--;
+    qty.innerHTML = quantity;
+
+    var total = parseFloat(basePrice.innerHTML) * quantity;
+    price.innerHTML = total;
+  }
+}
+</script>
+
+
+{% endblock%}

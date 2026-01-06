@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if single %}
+
+   <div class="card" style="margin-left: 600px; width: 300px; margin-top: 70px;">
+   <img src="{{single.image.url}}" class="card-img-top" alt="..." height="200px">
+  <div class="card-body">
+    <h3 class="card-title">{{single.name}}</h3>
+    <p>{{single.description}}</p>
+    <h3 style="margin-left: 50px;">  
+      <button class="btn" onclick="increment()"><i class="bi bi-plus"></button></i>
+     <span id="c"> {{single.weight_kg}}</span>kg
+      <button class="btn" onclick="decrement()"><i class="bi bi-dash"></i></button>
+    </h3>
+    <span style="font-size: 29px;">₹</span><span id="p" style="font-size: 30px;">{{single.price}}</span>
+   <span id="t" style="font-size: 30px;" hidden>{{single.price}}</span>
+    <div style="display: flex;">
+    {% for j in rating %}
+    {% if single.rating >= j %} 
+    <i class="bi bi-star-fill " style="color: green;"></i>
+    {% else %}
+    <i class="bi bi-star-fill " style="color:rgba(47, 45, 45, 0.262)"></i>
+    {% endif %}
+    {% endfor %}
+
+</div>
+ <script>
+  function increment(){
+      var x=document.getElementById('c').innerHTML
+      var y=parseFloat(x)
+      y++ 
+      document.getElementById('c').innerHTML=y
+      var d=parseFloat(document.getElementById('t').innerHTML)
+      d1=d*y
+      document.getElementById('p').innerHTML=d1
+  }
+  
+    function decrement(){
+    let x=document.getElementById('c').innerHTML
+    let y=parseFloat(x)
+    if(y>1){
+    y--
+    document.getElementById('c').innerHTML=y
+    var unit=parseFloat(document.getElementById('p').innerHTML)
+    var d=parseFloat(document.getElementById('t').innerHTML)
+    unit=unit-d
+    document.getElementById('p').innerHTML=unit
+    }
+  }
+
+  
+ </script>
+
+   
+
+    <a href="{% url 'pay1' single.id %}"><button class="btn btn-success" style="margin-left: 40px;">Buy Now</button></a>
+    <a href="{% url  'cart_list' single.id %}"><button class="btn btn-danger" onclick=" alert('item successfully add into the cart')">Add Cart</button></a>
+  </div>
+</div>
+
+ 
+{% endif %}
+ <!-- below show -->
+
+ <div class="row" style="margin-top: 40px;">
+    {% for i in below %}
+  <div class="col-md-2" style="margin-top: 20px;">
+
+    <div class="card" style="width: 14rem;height: 300px;">
+        <a href="{% url 'show' i.id i.categories %}"><img src="{{i.image.url}}" class="card-img-top" alt="..." height="100px"></a>
+        <div class="card-body">
+            <h3 class="card-title">{{i.name}}</h3>
+            <h4>{{i.weight_kg}}kg</h4>
+            <h4>₹{{i.price}}</h4>
+    <div style="display: flex;">
+    {% for j in rating %}
+    {% if i.rating >= j %} 
+    <i class="bi bi-star-fill " style="color: green;"></i>
+    {% else %}
+    <i class="bi bi-star-fill " style="color:rgba(47, 45, 45, 0.262)"></i>
+    {% endif %}
+    {% endfor %}
+
+</div>
+            <a href="{% url 'show' i.id i.categories %}" class="btn btn-primary">Go somewhere</a>
+        </div>
+   </div>
+</div>
+{% endfor %}
+</div>
+
+ {% endblock %}

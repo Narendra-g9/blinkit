@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order Summary</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+
+<style>
+    /* Basic, replaceable styles */
+    :root { font-family: Arial, sans-serif; }
+    .delivery-card {
+      width: 100%;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background: antiquewhite;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+    }
+    .delivery-header { display:flex; align-items:center; justify-content:space-between; }
+    .delivery-header h1 { margin:0; font-size: 1.6rem; }
+    .user-row { display:flex; align-items:center; gap: 12px; margin-top: 18px; }
+    .user-name { font-size: 1.2rem; font-weight:600; }
+    .address-form { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top: 12px; }
+    .address-form input[type="text"] {
+      width: 320px; max-width: 100%;
+      padding:10px; border:1px solid #ccc; border-radius:4px;
+      font-size: 1rem; box-sizing:border-box;
+    }
+    .btn { padding: 8px 12px; border-radius:6px; border:none; cursor:pointer; background:#efefef; }
+    .btn-primary { background:#007bff; color:white; }
+    .btn:disabled { opacity:0.6; cursor:not-allowed; }
+    .error { color: #b00020; margin-top:8px; min-height:18px; }
+    .address-preview { margin-top:12px; }
+    @media (max-width:560px){ .address-form{ flex-direction:column; align-items:stretch } }
+  </style>
+
+</head>
+<body>
+  <div style="background-color:blueviolet;width: 100%;height: 60px;font-size: 40px;color:rgb(226, 228, 224);text-shadow:-2px 2px #ff0011;padding-left: 650px;"><i>Blinkit</i></div>
+    
+  
+
+
+
+
+<section class="delivery-card" aria-labelledby="deliveryTitle">
+    <div class="delivery-header">
+      <h1 id="deliveryTitle">Delivery</h1>
+      <!-- Edit could open a modal or inline edit; here we show a placeholder -->
+      <button class="btn" id="editProfileBtn" aria-label="Edit profile">Edit</button>
+    </div>
+
+    <div class="user-row" aria-live="polite">
+      <!-- Template variable: server should render user name here -->
+      <div class="user-name" id="userName">{{name}}</div>
+      <!-- You could show account info, phone, etc. -->
+    </div>
+
+    <form id="addressForm" class="address-form" onsubmit="return false;" aria-describedby="addressHelp">
+      <label for="addressInput" class="sr-only">Delivery address</label>
+      <input type="text" id="addressInput" name="address" placeholder="Enter address here" autocomplete="street-address" />
+      <button type="button" class="btn" id="addAddressBtn" >Add Address Details</button>
+      <div id="addressHelp" class="error" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="address-preview" id="addressPreview" aria-hidden="true"></div>
+
+    <div style="margin-top:14px;">
+      <button class="btn btn-primary" id="deliverHereBtn" type="button" disabled onclick="ord()">Deliver here</button>
+    </div>
+  </section>
+
+  <script>
+    // Get elements
+    const addressInput = document.getElementById('addressInput');
+    const addAddressBtn = document.getElementById('addAddressBtn');
+    const addressHelp = document.getElementById('addressHelp');
+    const addressPreview = document.getElementById('addressPreview');
+    const deliverHereBtn = document.getElementById('deliverHereBtn');
+
+    // Simple validation: check non-empty and reasonable length
+    function validateAddress(value) {
+      if (!value || value.trim().length === 0) {
+        return { ok: false, message: 'Address cannot be empty.' };
+      }
+      if (value.trim().length < 10) {
+        return { ok: false, message: 'Please provide a more specific address (min 10 characters).' };
+      }
+      if (value.trim().length > 300) {
+        return { ok: false, message: 'Address is too long.' };
+      }
+      return { ok: true };
+    }
+
+    addAddressBtn.addEventListener('click', () => {
+      const value = addressInput.value;
+      const v = validateAddress(value);
+      if (!v.ok) {
+        addressHelp.textContent = v.message;
+        addressPreview.textContent = '';
+        addressPreview.setAttribute('aria-hidden','true');
+        deliverHereBtn.disabled = true;
+        return;
+      }
+
+      // Success: show preview, enable deliver button, clear error
+      addressHelp.textContent = '';
+      addressPreview.textContent = 'Saved address: ' + value.trim();
+      addressPreview.setAttribute('aria-hidden','false');
+      deliverHereBtn.disabled = false;
+
+      // Optionally clear input: addressInput.value = '';
+      // Optionally store in local storage (client-side) or send to server via fetch/ajax
+      // For demo we'll keep it client-side only.
+      // localStorage.setItem('deliveryAddress', value.trim());
+    });
+
+    // Deliver button action
+    deliverHereBtn.addEventListener('click', () => {
+      // In a real app, POST the address to the server or submit the form
+      const addrText = addressPreview.textContent.replace(/^Saved address:\s*/, '');
+      if (!addrText) {
+        addressHelp.textContent = 'No address to deliver to.';
+        return;
+      }
+      // Example behavior: show confirmation and simulate sending to server
+      alert('Order will be delivered to:\\n' + addrText);
+      // Example: send to server with fetch:
+      // fetch('/place-order/', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({address: addrText}) })
+      //  .then(resp => resp.json()).then(data => { /* handle response */ });
+    });
+
+    // Optional: press Enter in input triggers Add
+    addressInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addAddressBtn.click();
+      }
+    });
+  </script>
+
+<script>
+
+  function ord(){
+    document.getElementById('ord').removeAttribute('hidden')
+  }
+  function pay(){
+    document.getElementById('pay').removeAttribute('hidden')
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+<!-- <div id="ord" style="height:100px;width: 900px;margin-left: 309px;" hidden> -->
+    <!-- Order summary -->
+   <!-- <div class="card mb-4">
+    <div class="card-header">
+      <h5>Order Summary</h5>
+    </div>
+    <div class="card-body">
+      <div class="d-flex align-items-center mb-3">
+        <div class="placeholder bg-secondary rounded-square me-3" style="width: 80px; height: 80px;"><img src="{{ab.image.url}}" style="width: 80px;height: 80px;"></div>
+        <div>
+          <h6>Item Name:&nbsp;&nbsp;{{ab.name}}</h6>
+          <p class=>Quantity:&nbsp;&nbsp;{{ab.weight_kg}}kg</p>
+          <p id="t">Price:&nbsp;&nbsp;{{ab.price}}</p>
+        </div>
+      </div>
+      <hr>
+      <p>Order confirmation email will be sent to you shortly.
+      <input type='email' placeholder="enter mail here " class="form-control" style="width: 300px;"></p>
+      <input  type="button" class="btn btn-primary"  value="submit" onclick="pay()">
+    </div>
+  </div>
+  </div> -->
+
+  <div id="ord" style="height:100px;width: 900px;margin-left: 309px;" hidden>
+  <!-- Order summary -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5>Order Summary</h5>
+    </div>
+    <div class="card-body">
+      <div class="d-flex align-items-center mb-3">
+        <div class="placeholder bg-secondary rounded-square me-3" style="width: 80px; height: 80px;">
+          <img src="{{ab.image.url}}" style="width: 80px;height: 80px;">
+        </div>
+
+        <div>
+          <h6>Item Name:&nbsp;&nbsp;{{ab.name}}</h6>
+
+          <!-- ✅ Added buttons and quantity paragraph -->
+          <div>
+            <button class="btn btn-primary btn-sm" onclick="decrement()">−</button>
+            <span id="c">{{ab.weight_kg}}</span> kg
+            <button class="btn btn-primary btn-sm" onclick="increment()">+</button>
+          </div>
+
+          <!-- ✅ Added price and hidden total elements -->
+          <p id="p">Price:&nbsp;&nbsp;{{ab.price}}</p>
+          <p id="t" hidden>{{ab.price}}</p>
+        </div>
+      </div>
+
+      <hr>
+      <p>
+        Order confirmation email will be sent to you shortly.
+        <input type='email' placeholder="enter mail here" class="form-control" style="width: 300px;">
+      </p>
+      <input type="button" class="btn btn-primary" value="submit" onclick="pay()">
+    </div>
+  </div>
+</div>
+
+<script>
+  function increment() {
+    var x = document.getElementById('c').innerHTML;
+    var y = parseFloat(x);
+    y++;
+    document.getElementById('c').innerHTML = y;
+    var d = parseFloat(document.getElementById('t').innerHTML);
+    d1 = d * y;
+    document.getElementById('p').innerHTML = "Price: " + d1;
+  }
+
+  function decrement() {
+    let x = document.getElementById('c').innerHTML;
+    let y = parseFloat(x);
+    if (y > 1) {
+      y--;
+      document.getElementById('c').innerHTML = y;
+      var unit = parseFloat(document.getElementById('p').innerHTML.replace('Price: ', ''));
+      var d = parseFloat(document.getElementById('t').innerHTML);
+      unit = unit - d;
+      document.getElementById('p').innerHTML = "Price: " + unit;
+    }
+  }
+</script>
+
+  
+  
+<div id="pay" style="height:100px;width: 900px;margin-left: 309px;margin-top: 300px;" hidden >
+  <!-- Payment method -->
+  <div class="card">
+    <div class="card-header">
+      <h5>Complete Payment</h5>
+    </div>
+    <div class="card-body">
+      <form>
+        <div class="mb-3">
+          <label class="form-label">Payment Method</label>
+          <select class="form-select" >
+            <option >UPI@ID</option>
+            <option >Pay Now (Credit/Debit)</option>
+            <option >Cash on Delivery</option>
+          </select>
+        </div>
+      <button type="submit" class="btn btn-primary w-100" onclick="alert('Order successfully ')"><a href="{% url 'home' %}" style="color: whitesmoke;">Place Order</a></button>
+      </form>
+    </div>
+  </div>
+</div> 
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
