@@ -155,3 +155,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+
+ALLOWED_HOSTS = [
+    'blinkit-d695.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+
