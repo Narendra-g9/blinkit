@@ -86,16 +86,21 @@ WSGI_APPLICATION = 'blinkit.wsgi.application'
 import pymysql
 pymysql.install_as_MySQLdb()
 
+import os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "hello",
-        'USER':"root",
-        'PASSWORD':"Narendra@143"
-        
-        
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
+        'OPTIONS': {
+            'ssl': {'ssl-mode': 'REQUIRED'},
+        }
     }
 }
+
 
 
 # Password validation
